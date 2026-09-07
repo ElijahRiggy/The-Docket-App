@@ -184,6 +184,11 @@
   .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
   .actions > * { flex: 1 1 180px; }
   .export-card { background: var(--card); }
+  .export-card.export-padding {
+    padding: 30px 32px 34px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+  }
 </style>
 </head>
 <body>
@@ -467,7 +472,9 @@
     var prevLabel = els.downloadBtn.textContent;
     els.downloadBtn.textContent = 'Preparing image…';
     var bg = getComputedStyle(document.documentElement).getPropertyValue('--card').trim();
+    els.exportCard.classList.add('export-padding');
     html2canvas(els.exportCard, { backgroundColor: bg || '#fbf7ec', scale: 2, useCORS: true }).then(function (canvas) {
+      els.exportCard.classList.remove('export-padding');
       var link = document.createElement('a');
       link.download = 'the-docket-' + (state.currentCase || 'case').replace(/[^a-z0-9]+/gi, '-') + '.png';
       link.href = canvas.toDataURL('image/png');
@@ -476,7 +483,11 @@
       document.body.removeChild(link);
       els.downloadBtn.disabled = false;
       els.downloadBtn.textContent = prevLabel;
-    }).catch(function () { els.downloadBtn.disabled = false; els.downloadBtn.textContent = prevLabel; });
+    }).catch(function () {
+      els.exportCard.classList.remove('export-padding');
+      els.downloadBtn.disabled = false;
+      els.downloadBtn.textContent = prevLabel;
+    });
   });
 
   setCaseNumber();
