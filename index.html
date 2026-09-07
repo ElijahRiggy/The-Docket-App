@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,900;1,500&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- ADSENSE SETUP (optional): once your site is approved in Google AdSense, replace ca-pub-XXXXXXXXXXXXXXXX below with your own publisher ID, then delete the comment markers around this script tag so it becomes live.
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+end of adsense script comment -->
 <style>
   :root {
     --paper: #edeff3;
@@ -140,6 +143,32 @@
 
   .disclaimer { margin-top: 18px; font-family: "IBM Plex Mono", monospace; font-size: 0.68rem; color: var(--ink-soft); text-align: center; }
 
+  .bribe-btn {
+    width: 100%; margin-top: 10px; font-family: "IBM Plex Mono", monospace; font-size: 0.8rem;
+    background: transparent; color: var(--brass); border: 1px dashed var(--brass); border-radius: 4px;
+    padding: 11px 14px; cursor: pointer;
+  }
+  .bribe-btn:hover { background: var(--brass); color: var(--mahogany-ink); border-style: solid; }
+
+  .tip-line { margin: -14px 0 24px; }
+  .tip-link {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-soft);
+    text-decoration: none; border-bottom: 1px dotted var(--ink-soft);
+  }
+  .tip-link:hover { color: var(--brass); border-color: var(--brass); }
+
+  .bribe-banner {
+    background: var(--card); border: 1px dashed var(--brass); color: var(--ink);
+    border-radius: 4px; padding: 14px 16px; font-size: 0.88rem; margin-bottom: 18px;
+  }
+  .bribe-banner strong { color: var(--brass); }
+
+  .ad-slot { margin-top: 32px; text-align: center; }
+  .ad-slot .ad-label {
+    display: block; font-family: "IBM Plex Mono", monospace; font-size: 0.62rem;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 6px;
+  }
+
   .loading-view { text-align: center; padding: 26px 8px 8px; }
   .gavel-rig { position: relative; height: 56px; aspect-ratio: 906 / 728; margin: 0 auto 18px; }
   .gavel-hammer, .gavel-base { position: absolute; display: block; width: auto; }
@@ -211,9 +240,11 @@
   </header>
 
   <p class="tagline">File your dispute. An AI judge weighs both sides and hands down an official, shareable ruling.</p>
+  <p class="tip-line"><a class="tip-link" href="https://ko-fi.com/REPLACE_WITH_YOUR_USERNAME" target="_blank" rel="noopener">☕ Tip the court</a></p>
 
   <main class="file" id="fileCard">
     <section id="errorSlot"></section>
+    <section id="bribeSlot"></section>
 
     <section id="intakeView">
       <label class="field-label" for="category-group">Category (optional)</label>
@@ -235,6 +266,7 @@
       </div>
 
       <button type="button" class="primary-btn" id="fileBtn">File Case for Ruling</button>
+      <button type="button" class="bribe-btn" id="bribeBtn">🤝 Bribe the Judge — guarantee a favorable ruling ($0.99)</button>
       <p class="disclaimer">For entertainment only. The Docket is an AI and has passed no bar exam.</p>
     </section>
 
@@ -282,10 +314,28 @@
       </div>
     </section>
   </main>
+
+  <!-- ADSENSE SETUP (optional): once you have an ad slot from Google AdSense, replace data-ad-client and data-ad-slot below with your own IDs, then delete the comment markers around this block so it becomes live.
+  <div class="ad-slot">
+    <span class="ad-label">Advertisement</span>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="0000000000"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  end of adsense block comment -->
 </div>
 
 <script>
 (function () {
+  // Stripe Payment Link for the "Bribe the Judge" upsell. Replace with your own link,
+  // and set its success redirect URL to your site's address with ?bribed=1 on the end
+  // (e.g. https://your-site.vercel.app/?bribed=1) so the flag below can pick it up.
+  var BRIBE_PAYMENT_LINK = 'https://buy.stripe.com/REPLACE_WITH_YOUR_LINK';
+
   var examples = [
     { category: "Roommate", text: "My roommate splits every group dinner exactly down the middle, even though I get a side salad and water and they get steak and three cocktails. When I brought it up, they said \"that's what splitting means.\"" },
     { category: "Group chat", text: "I left the family group chat for two days because of a migraine and came back to find out they'd planned Thanksgiving without me and are now saying it's too late for me to have an opinion on the menu." },
@@ -297,6 +347,8 @@
   var els = {
     caseMeta: document.getElementById('caseMeta'),
     errorSlot: document.getElementById('errorSlot'),
+    bribeSlot: document.getElementById('bribeSlot'),
+    bribeBtn: document.getElementById('bribeBtn'),
     intakeView: document.getElementById('intakeView'),
     loadingView: document.getElementById('loadingView'),
     resultView: document.getElementById('resultView'),
@@ -321,7 +373,34 @@
     exportCard: document.getElementById('exportCard')
   };
 
-  var state = { category: null, controller: null, currentCase: null };
+  var state = { category: null, controller: null, currentCase: null, bribed: false };
+
+  function showBribeBanner() {
+    els.bribeSlot.innerHTML = '';
+    var wrap = document.createElement('div');
+    wrap.className = 'bribe-banner';
+    var strong = document.createElement('strong'); strong.textContent = 'An envelope has changed hands. ';
+    wrap.appendChild(strong);
+    wrap.appendChild(document.createTextNode('Your next ruling will be... favorably inclined.'));
+    els.bribeSlot.appendChild(wrap);
+  }
+  function clearBribeBanner() { els.bribeSlot.innerHTML = ''; }
+
+  function checkBribeReturn() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('bribed') === '1') {
+      state.bribed = true;
+      showBribeBanner();
+      params.delete('bribed');
+      var qs = params.toString();
+      var newUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }
+
+  els.bribeBtn.addEventListener('click', function () {
+    window.open(BRIBE_PAYMENT_LINK, '_blank', 'noopener');
+  });
 
   function newCaseNumber() {
     var d = new Date();
@@ -439,14 +518,20 @@
     fetch('/api/verdict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ complaint: complaint, category: state.category }),
+      body: JSON.stringify({ complaint: complaint, category: state.category, bribed: state.bribed }),
       signal: ctl.signal
     })
       .then(function (r) {
         if (!r.ok) return r.json().catch(function () { return {}; }).then(function (e) { throw { httpStatus: r.status, body: e }; });
         return r.json();
       })
-      .then(function (data) { stopDeliberating(); renderVerdict(data, complaint); })
+      .then(function (data) {
+        stopDeliberating();
+        renderVerdict(data, complaint);
+        // The bribe only covers one ruling — spend it now that it's been used.
+        state.bribed = false;
+        clearBribeBanner();
+      })
       .catch(function (e) {
         stopDeliberating();
         showView('intake');
@@ -491,6 +576,7 @@
   });
 
   setCaseNumber();
+  checkBribeReturn();
 })();
 </script>
 </body>
