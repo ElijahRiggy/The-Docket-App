@@ -330,8 +330,11 @@
 <script>
 (function () {
   // Stripe Payment Link for the "Bribe the Judge" upsell. Replace with your own link,
-  // and set its success redirect URL to your site's address with ?bribed=1 on the end
-  // (e.g. https://your-site.vercel.app/?bribed=1) so the flag below can pick it up.
+  // and set its success redirect URL to your site's address with a literal
+  // {CHECKOUT_SESSION_ID} placeholder on the end, e.g.:
+  //   https://your-site.vercel.app/?session_id={CHECKOUT_SESSION_ID}
+  // Stripe fills that placeholder in with the real session ID on redirect, which
+  // the backend then verifies before granting the favorable ruling.
   var BRIBE_PAYMENT_LINK = 'https://buy.stripe.com/00w6oA4v06DdeUm3QpenS00';
 
   var examples = [
@@ -371,7 +374,7 @@
     exportCard: document.getElementById('exportCard')
   };
 
-  var state = { category: null, controller: null, currentCase: null, bribed: false };
+  var state = { category: null, controller: null, currentCase: null, stripeSessionId: null };
 
   function showBribeBanner() {
     els.bribeSlot.innerHTML = '';
@@ -386,10 +389,11 @@
 
   function checkBribeReturn() {
     var params = new URLSearchParams(window.location.search);
-    if (params.get('bribed') === '1') {
-      state.bribed = true;
+    var sessionId = params.get('session_id');
+    if (sessionId) {
+      state.stripeSessionId = sessionId;
       showBribeBanner();
-      params.delete('bribed');
+      params.delete('session_id');
       var qs = params.toString();
       var newUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
       window.history.replaceState({}, '', newUrl);
@@ -516,7 +520,7 @@
     fetch('/api/verdict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ complaint: complaint, category: state.category, bribed: state.bribed }),
+      body: JSON.stringify({ complaint: complaint, category: state.category, stripeSessionId: state.stripeSessionId }),
       signal: ctl.signal
     })
       .then(function (r) {
@@ -527,7 +531,7 @@
         stopDeliberating();
         renderVerdict(data, complaint);
         // The bribe only covers one ruling — spend it now that it's been used.
-        state.bribed = false;
+        state.stripeSessionId = null;
         clearBribeBanner();
       })
       .catch(function (e) {
