@@ -237,15 +237,7 @@
   .jury-pct { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1rem; }
   .jury-track {
     height: 10px; border-radius: 999px; background: var(--line); overflow: hidden;
-    position: relative; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
-  }
-  .jury-track::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none;
-    background-image: linear-gradient(90deg,
-      transparent 24.3%, rgba(255, 255, 255, 0.9) 25%, rgba(0, 0, 0, 0.35) 25.7%, transparent 26.4%,
-      transparent 49.3%, rgba(255, 255, 255, 0.9) 50%, rgba(0, 0, 0, 0.35) 50.7%, transparent 51.4%,
-      transparent 74.3%, rgba(255, 255, 255, 0.9) 75%, rgba(0, 0, 0, 0.35) 75.7%, transparent 76.4%);
-    mix-blend-mode: overlay;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
   }
   .jury-fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
 
