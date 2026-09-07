@@ -29,6 +29,8 @@
     --jury-high: #2f6b4f;
     --danger-bg: #f3ddd4;
     --danger-ink: #7a2e28;
+    --vignette-1: rgba(27, 58, 99, 0.055);
+    --vignette-2: rgba(255, 255, 255, 0.55);
     color-scheme: light dark;
   }
 
@@ -51,6 +53,8 @@
       --jury-high: #7fb380;
       --danger-bg: #3a241d;
       --danger-ink: #f0b3a4;
+      --vignette-1: rgba(0, 0, 0, 0.45);
+      --vignette-2: rgba(255, 255, 255, 0.035);
     }
   }
 
@@ -58,7 +62,10 @@
 
   body {
     margin: 0;
-    background: var(--paper);
+    background:
+      radial-gradient(120% 90% at 50% -10%, var(--vignette-2), transparent 60%),
+      radial-gradient(140% 100% at 50% 110%, var(--vignette-1), transparent 55%),
+      var(--paper);
     color: var(--ink);
     font-family: "PT Serif", Georgia, "Times New Roman", serif;
     padding: clamp(20px, 5vw, 56px) 16px 64px;
@@ -66,11 +73,12 @@
     justify-content: center;
   }
 
-  .wrap { width: 100%; max-width: 620px; }
+  .wrap { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 26px; }
+  .intro { display: flex; flex-direction: column; gap: 6px; }
 
   .letterhead {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 12px;
     padding-bottom: 14px;
@@ -88,16 +96,23 @@
   }
 
   .case-meta {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.75rem; color: var(--ink-soft);
-    text-align: right; white-space: nowrap; padding-top: 4px;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-soft);
+    text-align: right; white-space: nowrap; letter-spacing: 0.02em;
+    border: 1px solid var(--line); border-radius: 3px; padding: 5px 10px;
+    background: var(--card); font-variant-numeric: tabular-nums;
   }
 
-  .tagline { margin: 14px 0 24px; color: var(--ink-soft); font-size: 0.98rem; max-width: 46ch; text-wrap: balance; }
+  .tagline { margin: 0; color: var(--ink-soft); font-size: 0.98rem; max-width: 46ch; text-wrap: balance; }
 
   .file {
     background: var(--card); border: 1px solid var(--line); border-radius: 6px;
     box-shadow: 0 18px 36px -22px var(--shadow), 0 2px 0 var(--line);
     padding: clamp(20px, 4vw, 34px); position: relative;
+  }
+  .file::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--brass), var(--mahogany) 55%, var(--brass));
+    border-radius: 6px 6px 0 0;
   }
   [hidden] { display: none !important; }
 
@@ -110,8 +125,13 @@
   .chip {
     font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; padding: 6px 12px; border-radius: 999px;
     border: 1px solid var(--line); background: transparent; color: var(--ink-soft); cursor: pointer;
+    transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
   }
-  .chip[aria-pressed="true"] { background: var(--mahogany); border-color: var(--mahogany); color: var(--mahogany-ink); }
+  .chip:hover { border-color: var(--mahogany); color: var(--ink); }
+  .chip[aria-pressed="true"] {
+    background: var(--mahogany); border-color: var(--mahogany); color: var(--mahogany-ink);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
+  }
   .chip:focus-visible, button:focus-visible, textarea:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
   textarea {
@@ -127,15 +147,19 @@
 
   .primary-btn {
     width: 100%; margin-top: 22px; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.05rem;
-    letter-spacing: 0.02em; background: var(--mahogany); color: var(--mahogany-ink); border: none; border-radius: 4px;
-    padding: 15px 18px; cursor: pointer;
+    letter-spacing: 0.02em; background: linear-gradient(180deg, var(--mahogany), var(--mahogany-strong));
+    color: var(--mahogany-ink); border: none; border-radius: 4px;
+    padding: 15px 18px; cursor: pointer; box-shadow: 0 10px 20px -12px var(--shadow);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
   }
-  .primary-btn:hover { background: var(--mahogany-strong); }
-  .primary-btn:disabled { opacity: 0.55; cursor: progress; }
+  .primary-btn:hover { background: linear-gradient(180deg, var(--mahogany-strong), var(--mahogany-strong)); box-shadow: 0 14px 22px -12px var(--shadow); transform: translateY(-1px); }
+  .primary-btn:active { transform: translateY(0); box-shadow: 0 6px 14px -10px var(--shadow); }
+  .primary-btn:disabled { opacity: 0.55; cursor: progress; transform: none; }
 
   .secondary-btn {
     font-family: "IBM Plex Mono", monospace; font-size: 0.82rem; background: transparent; color: var(--ink);
     border: 1px solid var(--line); border-radius: 4px; padding: 12px 16px; cursor: pointer;
+    transition: border-color 0.12s ease, color 0.12s ease;
   }
   .secondary-btn:hover { border-color: var(--mahogany); color: var(--mahogany); }
 
@@ -145,10 +169,11 @@
     width: 100%; margin-top: 10px; font-family: "IBM Plex Mono", monospace; font-size: 0.8rem;
     background: transparent; color: var(--brass); border: 1px dashed var(--brass); border-radius: 4px;
     padding: 11px 14px; cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease, border-style 0.12s ease;
   }
   .bribe-btn:hover { background: var(--brass); color: var(--mahogany-ink); border-style: solid; }
 
-  .tip-line { margin: -14px 0 24px; }
+  .tip-line { margin: 0; }
   .tip-link {
     font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-soft);
     text-decoration: none; border-bottom: 1px dotted var(--ink-soft);
@@ -161,13 +186,13 @@
   }
   .bribe-banner strong { color: var(--brass); }
 
-  .ad-slot { margin-top: 32px; text-align: center; }
+  .ad-slot { text-align: center; }
   .ad-slot .ad-label {
     display: block; font-family: "IBM Plex Mono", monospace; font-size: 0.62rem;
     letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 6px;
   }
 
-  .site-footer { text-align: center; margin-top: 30px; }
+  .site-footer { text-align: center; }
   .site-footer a {
     font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-soft);
     text-decoration: none; border-bottom: 1px dotted var(--ink-soft);
@@ -200,6 +225,7 @@
     display: inline-block; border: 4px double var(--stamp); color: var(--stamp); padding: 0.35em 0.95em;
     font-family: "Fraunces", Georgia, serif; font-weight: 900; font-size: clamp(1.35rem, 6vw, 2rem);
     text-transform: uppercase; letter-spacing: 0.04em; border-radius: 4px; transform: rotate(-4deg);
+    text-shadow: 0.4px 0.4px 0 currentColor;
   }
 
   .field-block { margin-bottom: 20px; }
@@ -209,8 +235,19 @@
 
   .jury-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
   .jury-pct { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1rem; }
-  .jury-track { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden; }
-  .jury-fill { height: 100%; border-radius: 999px; }
+  .jury-track {
+    height: 10px; border-radius: 999px; background: var(--line); overflow: hidden;
+    position: relative; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
+  .jury-track::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: linear-gradient(90deg,
+      transparent 24.3%, rgba(255, 255, 255, 0.9) 25%, rgba(0, 0, 0, 0.35) 25.7%, transparent 26.4%,
+      transparent 49.3%, rgba(255, 255, 255, 0.9) 50%, rgba(0, 0, 0, 0.35) 50.7%, transparent 51.4%,
+      transparent 74.3%, rgba(255, 255, 255, 0.9) 75%, rgba(0, 0, 0, 0.35) 75.7%, transparent 76.4%);
+    mix-blend-mode: overlay;
+  }
+  .jury-fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
 
   .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
   .actions > * { flex: 1 1 180px; }
@@ -227,7 +264,9 @@
   @media (max-width: 640px) {
     html { font-size: 14px; }
     body { padding: 14px 12px 40px; }
+    .wrap { gap: 20px; }
     .file { padding: 16px; }
+    .case-meta { padding: 4px 8px; }
     .brand img.gavel-icon { height: 24px; }
     .stamp { border-width: 3px; padding: 0.3em 0.8em; }
     .gavel-rig { height: 44px; }
@@ -244,8 +283,10 @@
     <div class="case-meta" id="caseMeta">No. —</div>
   </header>
 
-  <p class="tagline">File your dispute. An AI judge weighs both sides and hands down an official, shareable ruling.</p>
-  <p class="tip-line"><a class="tip-link" href="https://ko-fi.com/REPLACE_WITH_YOUR_USERNAME" target="_blank" rel="noopener">☕ Tip the court</a></p>
+  <div class="intro">
+    <p class="tagline">File your dispute. An AI judge weighs both sides and hands down an official, shareable ruling.</p>
+    <p class="tip-line"><a class="tip-link" href="https://ko-fi.com/riggy80083" target="_blank" rel="noopener">☕ Tip the court</a></p>
+  </div>
 
   <main class="file" id="fileCard">
     <section id="errorSlot"></section>
@@ -346,7 +387,7 @@
   //   https://your-site.vercel.app/?session_id={CHECKOUT_SESSION_ID}
   // Stripe fills that placeholder in with the real session ID on redirect, which
   // the backend then verifies before granting the favorable ruling.
-  var BRIBE_PAYMENT_LINK = 'https://buy.stripe.com/REPLACE_WITH_YOUR_LINK';
+  var BRIBE_PAYMENT_LINK = 'https://buy.stripe.com/00w6oA4v06DdeUm3QpenS00';
 
   var examples = [
     { category: "Roommate", text: "My roommate splits every group dinner exactly down the middle, even though I get a side salad and water and they get steak and three cocktails. When I brought it up, they said \"that's what splitting means.\"" },
