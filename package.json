@@ -1,0 +1,6 @@
+{
+  "name": "the-docket",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Docket - an AI judge for everyday disputes, powered by Groq's free tier."
+}
