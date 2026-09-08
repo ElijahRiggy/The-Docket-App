@@ -29,8 +29,6 @@
     --jury-high: #2f6b4f;
     --danger-bg: #f3ddd4;
     --danger-ink: #7a2e28;
-    --vignette-1: rgba(27, 58, 99, 0.055);
-    --vignette-2: rgba(255, 255, 255, 0.55);
     color-scheme: light dark;
   }
 
@@ -53,8 +51,6 @@
       --jury-high: #7fb380;
       --danger-bg: #3a241d;
       --danger-ink: #f0b3a4;
-      --vignette-1: rgba(0, 0, 0, 0.45);
-      --vignette-2: rgba(255, 255, 255, 0.035);
     }
   }
 
@@ -62,10 +58,7 @@
 
   body {
     margin: 0;
-    background:
-      radial-gradient(120% 90% at 50% -10%, var(--vignette-2), transparent 60%),
-      radial-gradient(140% 100% at 50% 110%, var(--vignette-1), transparent 55%),
-      var(--paper);
+    background: var(--paper);
     color: var(--ink);
     font-family: "PT Serif", Georgia, "Times New Roman", serif;
     padding: clamp(20px, 5vw, 56px) 16px 64px;
@@ -73,12 +66,11 @@
     justify-content: center;
   }
 
-  .wrap { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 26px; }
-  .intro { display: flex; flex-direction: column; gap: 6px; }
+  .wrap { width: 100%; max-width: 620px; }
 
   .letterhead {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
     padding-bottom: 14px;
@@ -96,23 +88,16 @@
   }
 
   .case-meta {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-soft);
-    text-align: right; white-space: nowrap; letter-spacing: 0.02em;
-    border: 1px solid var(--line); border-radius: 3px; padding: 5px 10px;
-    background: var(--card); font-variant-numeric: tabular-nums;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.75rem; color: var(--ink-soft);
+    text-align: right; white-space: nowrap; padding-top: 4px;
   }
 
-  .tagline { margin: 0; color: var(--ink-soft); font-size: 0.98rem; max-width: 46ch; text-wrap: balance; }
+  .tagline { margin: 14px 0 24px; color: var(--ink-soft); font-size: 0.98rem; max-width: 46ch; text-wrap: balance; }
 
   .file {
     background: var(--card); border: 1px solid var(--line); border-radius: 6px;
     box-shadow: 0 18px 36px -22px var(--shadow), 0 2px 0 var(--line);
     padding: clamp(20px, 4vw, 34px); position: relative;
-  }
-  .file::before {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, var(--brass), var(--mahogany) 55%, var(--brass));
-    border-radius: 6px 6px 0 0;
   }
   [hidden] { display: none !important; }
 
@@ -125,13 +110,8 @@
   .chip {
     font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; padding: 6px 12px; border-radius: 999px;
     border: 1px solid var(--line); background: transparent; color: var(--ink-soft); cursor: pointer;
-    transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
   }
-  .chip:hover { border-color: var(--mahogany); color: var(--ink); }
-  .chip[aria-pressed="true"] {
-    background: var(--mahogany); border-color: var(--mahogany); color: var(--mahogany-ink);
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
-  }
+  .chip[aria-pressed="true"] { background: var(--mahogany); border-color: var(--mahogany); color: var(--mahogany-ink); }
   .chip:focus-visible, button:focus-visible, textarea:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
   textarea {
@@ -147,19 +127,15 @@
 
   .primary-btn {
     width: 100%; margin-top: 22px; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.05rem;
-    letter-spacing: 0.02em; background: linear-gradient(180deg, var(--mahogany), var(--mahogany-strong));
-    color: var(--mahogany-ink); border: none; border-radius: 4px;
-    padding: 15px 18px; cursor: pointer; box-shadow: 0 10px 20px -12px var(--shadow);
-    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    letter-spacing: 0.02em; background: var(--mahogany); color: var(--mahogany-ink); border: none; border-radius: 4px;
+    padding: 15px 18px; cursor: pointer;
   }
-  .primary-btn:hover { background: linear-gradient(180deg, var(--mahogany-strong), var(--mahogany-strong)); box-shadow: 0 14px 22px -12px var(--shadow); transform: translateY(-1px); }
-  .primary-btn:active { transform: translateY(0); box-shadow: 0 6px 14px -10px var(--shadow); }
-  .primary-btn:disabled { opacity: 0.55; cursor: progress; transform: none; }
+  .primary-btn:hover { background: var(--mahogany-strong); }
+  .primary-btn:disabled { opacity: 0.55; cursor: progress; }
 
   .secondary-btn {
     font-family: "IBM Plex Mono", monospace; font-size: 0.82rem; background: transparent; color: var(--ink);
     border: 1px solid var(--line); border-radius: 4px; padding: 12px 16px; cursor: pointer;
-    transition: border-color 0.12s ease, color 0.12s ease;
   }
   .secondary-btn:hover { border-color: var(--mahogany); color: var(--mahogany); }
 
@@ -169,11 +145,10 @@
     width: 100%; margin-top: 10px; font-family: "IBM Plex Mono", monospace; font-size: 0.8rem;
     background: transparent; color: var(--brass); border: 1px dashed var(--brass); border-radius: 4px;
     padding: 11px 14px; cursor: pointer;
-    transition: background 0.12s ease, color 0.12s ease, border-style 0.12s ease;
   }
   .bribe-btn:hover { background: var(--brass); color: var(--mahogany-ink); border-style: solid; }
 
-  .tip-line { margin: 0; }
+  .tip-line { margin: -14px 0 24px; }
   .tip-link {
     font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-soft);
     text-decoration: none; border-bottom: 1px dotted var(--ink-soft);
@@ -186,18 +161,62 @@
   }
   .bribe-banner strong { color: var(--brass); }
 
-  .ad-slot { text-align: center; }
+  .ad-slot { margin-top: 32px; text-align: center; }
   .ad-slot .ad-label {
     display: block; font-family: "IBM Plex Mono", monospace; font-size: 0.62rem;
     letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 6px;
   }
 
-  .site-footer { text-align: center; }
+  .site-footer { text-align: center; margin-top: 30px; }
   .site-footer a {
     font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-soft);
     text-decoration: none; border-bottom: 1px dotted var(--ink-soft);
   }
   .site-footer a:hover { color: var(--brass); border-color: var(--brass); }
+
+  .info-section { margin-top: 44px; }
+  .info-section .section-label {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.68rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--brass); margin-bottom: 8px; display: block;
+  }
+  .info-section h2 {
+    font-family: "Fraunces", Georgia, serif; font-weight: 900; font-size: clamp(1.2rem, 4vw, 1.5rem);
+    margin: 0 0 12px; text-wrap: balance;
+  }
+  .info-section p { line-height: 1.8; color: var(--ink); margin: 0 0 14px; max-width: 62ch; }
+  .info-section p:last-child { margin-bottom: 0; }
+
+  .how-steps { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 16px; }
+  .how-steps li { display: flex; gap: 14px; align-items: flex-start; }
+  .how-steps .step-num {
+    font-family: "Fraunces", Georgia, serif; font-weight: 900; font-size: 1.05rem; color: var(--brass);
+    flex: none; width: 30px; height: 30px; border: 1px solid var(--brass); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .how-steps .step-body b { display: block; font-family: "Fraunces", Georgia, serif; font-size: 1rem; margin-bottom: 2px; }
+  .how-steps .step-body span { color: var(--ink-soft); font-size: 0.92rem; }
+
+  .hof-grid { display: grid; gap: 16px; margin-top: 18px; }
+  .hof-card { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; }
+  .hof-card .exhibit { margin-bottom: 10px; }
+  .hof-card .case-title { font-size: 1.05rem; margin-bottom: 4px; }
+  .hof-card .quote { font-size: 0.95rem; margin-bottom: 12px; }
+  .hof-card .hof-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; color: var(--ink-soft);
+  }
+  .hof-card .hof-meta .stamp-mini {
+    font-family: "Fraunces", Georgia, serif; font-weight: 900; text-transform: uppercase; letter-spacing: 0.03em;
+    color: var(--stamp); border: 2px double var(--stamp); border-radius: 4px; padding: 2px 8px; font-size: 0.75rem;
+  }
+
+  .faq-list { margin-top: 18px; display: grid; gap: 10px; }
+  .faq-list details { border: 1px solid var(--line); border-radius: 6px; background: var(--card); padding: 14px 16px; }
+  .faq-list summary { cursor: pointer; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 0.98rem; list-style: none; }
+  .faq-list summary::-webkit-details-marker { display: none; }
+  .faq-list summary::before { content: "+ "; color: var(--brass); font-weight: 900; }
+  .faq-list details[open] summary::before { content: "\2212 "; }
+  .faq-list p { margin: 10px 0 0; line-height: 1.75; color: var(--ink-soft); font-size: 0.94rem; max-width: none; }
 
   .loading-view { text-align: center; padding: 26px 8px 8px; }
   .gavel-rig { position: relative; height: 56px; aspect-ratio: 906 / 728; margin: 0 auto 18px; }
@@ -225,7 +244,6 @@
     display: inline-block; border: 4px double var(--stamp); color: var(--stamp); padding: 0.35em 0.95em;
     font-family: "Fraunces", Georgia, serif; font-weight: 900; font-size: clamp(1.35rem, 6vw, 2rem);
     text-transform: uppercase; letter-spacing: 0.04em; border-radius: 4px; transform: rotate(-4deg);
-    text-shadow: 0.4px 0.4px 0 currentColor;
   }
 
   .field-block { margin-bottom: 20px; }
@@ -235,11 +253,8 @@
 
   .jury-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
   .jury-pct { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1rem; }
-  .jury-track {
-    height: 10px; border-radius: 999px; background: var(--line); overflow: hidden;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
-  }
-  .jury-fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
+  .jury-track { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .jury-fill { height: 100%; border-radius: 999px; }
 
   .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
   .actions > * { flex: 1 1 180px; }
@@ -256,9 +271,7 @@
   @media (max-width: 640px) {
     html { font-size: 14px; }
     body { padding: 14px 12px 40px; }
-    .wrap { gap: 20px; }
     .file { padding: 16px; }
-    .case-meta { padding: 4px 8px; }
     .brand img.gavel-icon { height: 24px; }
     .stamp { border-width: 3px; padding: 0.3em 0.8em; }
     .gavel-rig { height: 44px; }
@@ -275,10 +288,8 @@
     <div class="case-meta" id="caseMeta">No. —</div>
   </header>
 
-  <div class="intro">
-    <p class="tagline">File your dispute. An AI judge weighs both sides and hands down an official, shareable ruling.</p>
-    <p class="tip-line"><a class="tip-link" href="https://ko-fi.com/riggy80083" target="_blank" rel="noopener">☕ Tip the court</a></p>
-  </div>
+  <p class="tagline">File your dispute. An AI judge weighs both sides and hands down an official, shareable ruling.</p>
+  <p class="tip-line"><a class="tip-link" href="https://ko-fi.com/REPLACE_WITH_YOUR_USERNAME" target="_blank" rel="noopener">☕ Tip the court</a></p>
 
   <main class="file" id="fileCard">
     <section id="errorSlot"></section>
@@ -353,6 +364,69 @@
     </section>
   </main>
 
+  <section class="info-section" aria-labelledby="how-heading">
+    <span class="section-label">How It Works</span>
+    <h2 id="how-heading">A courtroom for the disputes too small for real court</h2>
+    <p>The Docket is an AI judge that hears out petty, everyday disagreements — who owes what for dinner, whether a "quick favor" crossed a line, what actually counts as splitting something fairly. Describe your side of it, and the AI weighs the facts the way a (very theatrical) judge would, then hands down a case title, a charge, a ruling, a mock jury vote, and a sentence — all in a few seconds.</p>
+    <ol class="how-steps">
+      <li><span class="step-num">1</span><span class="step-body"><b>File your case</b><span>Pick an optional category and describe the dispute in your own words.</span></span></li>
+      <li><span class="step-num">2</span><span class="step-body"><b>The court deliberates</b><span>An AI model reads the complaint and drafts a charge, ruling, and sentence in the voice of a dry courtroom judge.</span></span></li>
+      <li><span class="step-num">3</span><span class="step-body"><b>Get your verdict</b><span>Download it as a shareable card, or take the case to your group chat for a second opinion.</span></span></li>
+    </ol>
+  </section>
+
+  <section class="info-section" aria-labelledby="hof-heading">
+    <span class="section-label">Hall of Fame</span>
+    <h2 id="hof-heading">A few past rulings</h2>
+    <div class="hof-grid">
+      <article class="hof-card">
+        <p class="exhibit"><b>Case No. 0412</b> — Category: Roommate</p>
+        <h3 class="case-title">The Matter of the Uneven Dinner Split</h3>
+        <p class="quote">"Splitting the bill does not mean splitting the blame for ordering a $34 ribeye."</p>
+        <div class="hof-meta"><span>Jury: 81% in favor</span><span class="stamp-mini">Guilty</span></div>
+      </article>
+      <article class="hof-card">
+        <p class="exhibit"><b>Case No. 0287</b> — Category: Group chat</p>
+        <h3 class="case-title">The People vs. the Left-on-Read Reply</h3>
+        <p class="quote">"Silence is not an argument. It is, at best, a very slow one."</p>
+        <div class="hof-meta"><span>Jury: 64% in favor</span><span class="stamp-mini">Dismissed</span></div>
+      </article>
+      <article class="hof-card">
+        <p class="exhibit"><b>Case No. 0155</b> — Category: Relationship</p>
+        <h3 class="case-title">The Thermostat Wars</h3>
+        <p class="quote">"Sixty-eight degrees is a compromise. A coat worn indoors is a protest."</p>
+        <div class="hof-meta"><span>Jury: 73% in favor</span><span class="stamp-mini">Guilty</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="info-section" aria-labelledby="faq-heading">
+    <span class="section-label">FAQ</span>
+    <h2 id="faq-heading">Frequently asked questions</h2>
+    <div class="faq-list">
+      <details>
+        <summary>Is this a real court?</summary>
+        <p>No. The Docket is satire — an AI-generated ruling for entertainment. Nothing here is legal advice, and no verdict is binding on anyone except maybe in the group chat.</p>
+      </details>
+      <details>
+        <summary>How does the AI reach a verdict?</summary>
+        <p>Your complaint is sent to a large language model prompted to act like a wry, fair-minded judge. It reads both sides as you've described them, then generates a case title, charge, ruling, jury vote percentage, and sentence in one pass. There's no database of real legal precedent involved — it's reasoning from the facts you give it, written with courtroom flair.</p>
+      </details>
+      <details>
+        <summary>What happens to my complaint after I submit it?</summary>
+        <p>It's sent to the AI provider to generate a ruling and isn't stored in a database afterward. See the <a href="/privacy.html">Privacy Policy</a> for details.</p>
+      </details>
+      <details>
+        <summary>What's "Bribe the Judge"?</summary>
+        <p>An optional $0.99 joke upsell: pay, and the verdict is guaranteed to rule in your favor. It's gated by a real Stripe payment, not an honor system — so yes, this AI judge really is for sale.</p>
+      </details>
+      <details>
+        <summary>Can I file an actual dispute I'm having?</summary>
+        <p>Sure — plenty of people file real roommate or group-chat arguments. Just treat the verdict as a shareable joke rather than a resolution. For anything involving real money or real consequences, talk to the other person directly, or consult an actual professional.</p>
+      </details>
+    </div>
+  </section>
+
   <!-- ADSENSE SETUP (optional): once you have an ad slot from Google AdSense, replace data-ad-client and data-ad-slot below with your own IDs, then delete the comment markers around this block so it becomes live.
   <div class="ad-slot">
     <span class="ad-label">Advertisement</span>
@@ -379,7 +453,7 @@
   //   https://your-site.vercel.app/?session_id={CHECKOUT_SESSION_ID}
   // Stripe fills that placeholder in with the real session ID on redirect, which
   // the backend then verifies before granting the favorable ruling.
-  var BRIBE_PAYMENT_LINK = 'https://buy.stripe.com/00w6oA4v06DdeUm3QpenS00';
+  var BRIBE_PAYMENT_LINK = 'https://buy.stripe.com/REPLACE_WITH_YOUR_LINK';
 
   var examples = [
     { category: "Roommate", text: "My roommate splits every group dinner exactly down the middle, even though I get a side salad and water and they get steak and three cocktails. When I brought it up, they said \"that's what splitting means.\"" },
